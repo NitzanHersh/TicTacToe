@@ -19,7 +19,7 @@ public class JSONRequest : MonoBehaviour
     //private int _acendingInt = 1;
     //private bool isPlayerTurn;
 
-    private bool _isFinished = false;
+    //private bool _isFinished = false;
     private bool _player1Won = false;
     private bool _player2Won = false;
 
@@ -27,10 +27,9 @@ public class JSONRequest : MonoBehaviour
     {
         theBoard.board = currentBoard;
         InitBoard();
-        ShowBoard();
+        //ShowBoard();
         theBoard.playerOneTurn = true;
         theBoard.playerTwoTurn = false;
-        theBoard.name = "Board1";
 
         //theBoard.random = "";
         //isPlayerTurn = true;
@@ -38,10 +37,9 @@ public class JSONRequest : MonoBehaviour
         toSend = Serialize(theBoard);
         Invoke("DoPost", 0.1f);
         InvokeRepeating("DoGet", 0.5f, 1f);
-        InvokeRepeating("DoPost", 1f, 1.5f);
+        //InvokeRepeating("DoPost", 1f, 1.5f);
 
 
-        //Debug.Log("is player one turn? " + theBoard.playerOneTurn + "is player two turn? " + theBoard.playerTwoTurn);
 
         //Invoke("DoGet", 0.1f);
         //theBoard = Deserialize(toSend);
@@ -51,7 +49,6 @@ public class JSONRequest : MonoBehaviour
 
     void Update()
     {
-        
 
         if (gameOver)
         {
@@ -84,21 +81,6 @@ public class JSONRequest : MonoBehaviour
 
         }
 
-        /*if (Input.GetKeyDown("space"))
-        {
-            Invoke("DoGet", 0.1f);
-            theBoard = Deserialize(toSend);
-            Debug.Log("Name: " + theBoard.name + "is it my turn? " + theBoard.playerOneTurn + "Show board");
-            ShowBoard();
-        }*/
-
-        /*if (Input.GetKeyDown("enter"))
-        {
-            _acendingInt++;
-            theBoard.name = "Board" + _acendingInt.ToString();
-            toSend = Serialize(theBoard);
-            Invoke("DoPost", 0.5f);
-        }*/
 
     }
 
@@ -110,7 +92,7 @@ public class JSONRequest : MonoBehaviour
         }
     }
 
-    void ShowBoard()
+    /*void ShowBoard()
     {
         string boardStr = "";
         for (int i = 0; i < currentBoard.Length; i += 3)
@@ -119,7 +101,7 @@ public class JSONRequest : MonoBehaviour
                 currentBoard[i + 1] + " " + currentBoard[i + 2] + "\n";
         }
         Debug.Log(boardStr);
-    }
+    }*/
 
     void HandleKeyPress(int key)
     {
@@ -128,16 +110,14 @@ public class JSONRequest : MonoBehaviour
             if (Input.GetKeyDown(key.ToString()) && currentBoard[key - 1] == '_')
             {
                 currentBoard[key - 1] = 'X';
-                textArray[key - 1].text = "X";
-                textArray[key - 1].color = new Color32(255, 0, 186, 255);
 
                 //currentBoard = theBoard.board;
                 theBoard.playerOneTurn = false;
                 theBoard.playerTwoTurn = true;
                 
                 //toSend = Serialize(theBoard);
-                //Invoke("DoPost", 0.5f);
-                //ShowBoard();
+                Invoke("DoPost", 0.1f);
+                //Invoke("DoGet", 0.5f);
             }
  
         }
@@ -147,21 +127,19 @@ public class JSONRequest : MonoBehaviour
             if (Input.GetKeyDown(key.ToString()) && currentBoard[key - 1] == '_')
             {
                 currentBoard[key - 1] = 'O';
-                textArray[key - 1].text = "O";
-                textArray[key - 1].color = new Color32(255, 255, 0, 255);
 
                 //currentBoard = theBoard.board;
-                theBoard.playerTwoTurn = false;
-                theBoard.playerOneTurn = true;
                 
-                //toSend = Serialize(theBoard);
-                //Invoke("DoPost", 0.5f);
-                //ShowBoard();
+                theBoard.playerOneTurn = true;
+                theBoard.playerTwoTurn = false;
+
+                Invoke("DoPost", 0.1f);
+                //Invoke("DoGet", 0.5f);
             }
 
         }
-        theBoard.board = currentBoard;
-        toSend = Serialize(theBoard);
+        //theBoard.board = currentBoard;
+        //toSend = Serialize(theBoard);
         //Invoke("DoPost", 0.5f);
 
         if (isWinning())
@@ -186,7 +164,6 @@ public class JSONRequest : MonoBehaviour
             message.color = new Color32(255, 255, 255, 255);
         }
 
-        //Debug.Log("is player one turn? " + theBoard.playerOneTurn + "is player two turn? " + theBoard.playerTwoTurn);
 
 
 
@@ -195,6 +172,8 @@ public class JSONRequest : MonoBehaviour
     void DoGet()
     {
         StartCoroutine("GetText");
+       
+
     }
 
     IEnumerator GetText()
@@ -216,15 +195,50 @@ public class JSONRequest : MonoBehaviour
         }
 
         theBoard = Deserialize(toSend);
+        currentBoard = theBoard.board;
+
+        for (int i = 0; i < currentBoard.Length; i++)
+        {
+            if (currentBoard[i] == 'O')
+            {
+                textArray[i].text = "O";
+                textArray[i].color = new Color32(255, 255, 0, 255);
+            }
+
+            if (currentBoard[i] == 'X')
+            {
+                textArray[i].text = "X";
+                textArray[i].color = new Color32(255, 0, 186, 255);
+            }
+        }
     }
 
     void DoPost()
     {
+        theBoard.board = currentBoard;
+
+        for (int i = 0; i < currentBoard.Length; i++)
+        {
+            if (currentBoard[i] == 'O')
+            {
+                textArray[i].text = "O";
+                textArray[i].color = new Color32(255, 255, 0, 255);
+            }
+
+            if (currentBoard[i] == 'X')
+            {
+                textArray[i].text = "X";
+                textArray[i].color = new Color32(255, 0, 186, 255);
+            }
+        }
+
+        toSend = Serialize(theBoard);
         StartCoroutine("Upload");
     }
 
     IEnumerator Upload()
     {
+
         List<IMultipartFormSection> form = new List<IMultipartFormSection>();
         form.Add(new MultipartFormDataSection("data", toSend));
 
