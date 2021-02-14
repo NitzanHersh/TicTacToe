@@ -16,10 +16,6 @@ public class JSONRequest : MonoBehaviour
     public Text turnIndicator;
     public Text message;
 
-    //private int _acendingInt = 1;
-    //private bool isPlayerTurn;
-
-    //private bool _isFinished = false;
     private bool _player1Won = false;
     private bool _player2Won = false;
 
@@ -27,23 +23,13 @@ public class JSONRequest : MonoBehaviour
     {
         theBoard.board = currentBoard;
         InitBoard();
-        //ShowBoard();
         theBoard.playerOneTurn = true;
         theBoard.playerTwoTurn = false;
 
-        //theBoard.random = "";
-        //isPlayerTurn = true;
-
         toSend = Serialize(theBoard);
         Invoke("DoPost", 0.1f);
+
         InvokeRepeating("DoGet", 0.5f, 1f);
-        //InvokeRepeating("DoPost", 1f, 1.5f);
-
-
-
-        //Invoke("DoGet", 0.1f);
-        //theBoard = Deserialize(toSend);
-
 
     }
 
@@ -92,16 +78,6 @@ public class JSONRequest : MonoBehaviour
         }
     }
 
-    /*void ShowBoard()
-    {
-        string boardStr = "";
-        for (int i = 0; i < currentBoard.Length; i += 3)
-        {
-            boardStr += currentBoard[i] + " " +
-                currentBoard[i + 1] + " " + currentBoard[i + 2] + "\n";
-        }
-        Debug.Log(boardStr);
-    }*/
 
     void HandleKeyPress(int key)
     {
@@ -111,13 +87,11 @@ public class JSONRequest : MonoBehaviour
             {
                 currentBoard[key - 1] = 'X';
 
-                //currentBoard = theBoard.board;
                 theBoard.playerOneTurn = false;
                 theBoard.playerTwoTurn = true;
-                
-                //toSend = Serialize(theBoard);
+
                 Invoke("DoPost", 0.1f);
-                //Invoke("DoGet", 0.5f);
+
             }
  
         }
@@ -127,20 +101,14 @@ public class JSONRequest : MonoBehaviour
             if (Input.GetKeyDown(key.ToString()) && currentBoard[key - 1] == '_')
             {
                 currentBoard[key - 1] = 'O';
-
-                //currentBoard = theBoard.board;
                 
                 theBoard.playerOneTurn = true;
                 theBoard.playerTwoTurn = false;
 
                 Invoke("DoPost", 0.1f);
-                //Invoke("DoGet", 0.5f);
             }
 
         }
-        //theBoard.board = currentBoard;
-        //toSend = Serialize(theBoard);
-        //Invoke("DoPost", 0.5f);
 
         if (isWinning())
         {
